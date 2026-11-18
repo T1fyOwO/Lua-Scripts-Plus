@@ -13,7 +13,7 @@ if (NOT DEFINED ENV{GEODE_SDK})
 endif()
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
-# Lua 5.4 via CPM (bundled with the Geode SDK)
+# Lua 5.4 via CPM
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 CPMAddPackage(
     NAME lua
@@ -21,4 +21,6 @@ CPMAddPackage(
     GIT_TAG v5.4.5
     OPTIONS "LUA_ENABLE_SHARED OFF" "LUA_BUILD_COMPILER OFF" "LUA_BUILD_INTERPRETER OFF"
 )
-target_link_libraries(${PROJECT_NAME} lua_static)
+target_link_libraries(${PROJECT_NAME} geode-sdk lua_static)
+
+setup_geode_mod(${PROJECT_NAME})
