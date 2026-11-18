@@ -1,24 +1,45 @@
-# Build output
-build/
-out/
-cmake-build-*/
+# Prerequisites
+*.d
 
-# Geode build artifacts
-*.geode
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
 
-# IDE / editor
-.vs/
-.vscode/
-.idea/
-.cache/
-compile_commands.json
+# Precompiled Headers
+*.gch
+*.pch
 
-# OS junk
-.DS_Store
-Thumbs.db
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
 
-# CMake
-CMakeUserPresets.json
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Macos be like
+**/.DS_Store
+
+# Cache files for Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# Ignore build folders
+**/build
+# Ignore platform specific build folders
+build-*/
