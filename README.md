@@ -1,4 +1,4 @@
-!(logo)[https://raw.githubusercontent.com/T1fyOwO/Lua-Scripts-Plus/refs/heads/main/logo.png]
+![logo](https://raw.githubusercontent.com/T1fyOwO/Lua-Scripts-Plus/refs/heads/main/logo.png)
 # Lua Scripts+
 
 A [Geode](https://geode-sdk.org) mod for Geometry Dash that injects and runs your own Lua scripts.
