@@ -1,0 +1,24 @@
+# Build output
+build/
+out/
+cmake-build-*/
+
+# Geode build artifacts
+*.geode
+
+# IDE / editor
+.vs/
+.vscode/
+.idea/
+.cache/
+compile_commands.json
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# CMake
+CMakeUserPresets.json
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake

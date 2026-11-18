@@ -1,0 +1,22 @@
+{
+	"geode": "6.0.0-alpha.2",
+	"gd": {
+		"win": "*",
+		"android": "*",
+		"mac": "*",
+		"ios": "*"
+	},
+	"id": "t1fy.lua-scripts-plus",
+	"name": "Lua Scripts+",
+	"version": "v1.0.0",
+	"developer": "T1fy",
+	"description": "Inject and run your own Lua scripts inside Geometry Dash.",
+	"settings": {
+		"autorun": {
+			"type": "bool",
+			"name": "Run scripts on startup",
+			"description": "Run every .lua file in the scripts folder when the game loads.",
+			"default": false
+		}
+	}
+}
