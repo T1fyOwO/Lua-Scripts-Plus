@@ -1,10 +1,7 @@
-name: Build Binary
+name: Build Geode Mod
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - "**"
 
 jobs:
   build:
