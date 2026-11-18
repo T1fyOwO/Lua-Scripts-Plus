@@ -6,6 +6,7 @@ extern "C" {
 #include <lualib.h>
 }
 
+#include <chrono>
 #include <map>
 #include <vector>
 #include <fstream>
@@ -51,12 +52,43 @@ namespace {
 		return 0;
 	}
 
+	// lsp.time() -> seconds (monotonic, fractional)
+	int l_time(lua_State* s) {
+		auto now = std::chrono::steady_clock::now().time_since_epoch();
+		lua_pushnumber(s, std::chrono::duration<double>(now).count());
+		return 1;
+	}
+
+	// lsp.setLabel(text) -> shows text in the corner of the level; "" hides it
+	int l_setLabel(lua_State* s) {
+		char const* text = luaL_checkstring(s, 1);
+		auto* pl = PlayLayer::get();
+		if (!pl) return 0;
+		auto* label = static_cast<CCLabelBMFont*>(pl->getChildByID("lsp-label"));
+		if (!label) {
+			label = CCLabelBMFont::create("", "bigFont.fnt");
+			label->setID("lsp-label");
+			label->setScale(0.5f);
+			label->setAnchorPoint({0.f, 1.f});
+			label->setOpacity(180);
+			label->setZOrder(1000);
+			auto win = CCDirector::get()->getWinSize();
+			label->setPosition({8.f, win.height - 8.f});
+			pl->addChild(label);
+		}
+		label->setString(text);
+		label->setVisible(text[0] != '\0');
+		return 0;
+	}
+
 	void registerApi() {
 		lua_newtable(L);
 		lua_pushcfunction(L, l_log);        lua_setfield(L, -2, "log");
 		lua_pushcfunction(L, l_on);         lua_setfield(L, -2, "on");
 		lua_pushcfunction(L, l_scriptsDir); lua_setfield(L, -2, "scriptsDir");
 		lua_pushcfunction(L, l_notify);     lua_setfield(L, -2, "notify");
+		lua_pushcfunction(L, l_time);       lua_setfield(L, -2, "time");
+		lua_pushcfunction(L, l_setLabel);   lua_setfield(L, -2, "setLabel");
 		lua_pushstring(L, "1.0.0");         lua_setfield(L, -2, "version");
 		lua_setglobal(L, "lsp");
 		// make print go to the Geode log too
