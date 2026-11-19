@@ -29,6 +29,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Install a newer Clang for Windows.
+      - name: Install LLVM 22
+        if: matrix.config.name == 'Windows'
+        uses: KyleMayes/install-llvm-action@v2
+        with:
+          version: "22.1.0"
+
       - name: Build the mod
         uses: geode-sdk/build-geode-mod@main
         with:
