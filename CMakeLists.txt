@@ -7,7 +7,7 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 project(LuaScriptsPlus VERSION 1.0.0)
 
 if (NOT DEFINED ENV{GEODE_SDK})
-    message(FATAL_ERROR "Unable to find Geode SDK! Set the GEODE_SDK environment variable.")
+    message(FATAL_ERROR "Unable to find Geode SDK! Set GEODE_SDK.")
 endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
@@ -30,12 +30,22 @@ CPMAddPackage(
         "LUA_BUILD_INTERPRETER OFF"
 )
 
-# Lua os.execute uses system(), which is unavailable on iOS.
+# Disable Lua's os.execute system() call on iOS.
 if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
-    set(LUA_LOSLIB "${lua_SOURCE_DIR}/src/loslib.c")
+
+    set(LUA_LOSLIB
+        "${lua_SOURCE_DIR}/lua-5.4.5/src/loslib.c"
+    )
+
+    # Fallback for alternate Lua source layouts.
+    if (NOT EXISTS "${LUA_LOSLIB}")
+        set(LUA_LOSLIB "${lua_SOURCE_DIR}/src/loslib.c")
+    endif()
 
     if (NOT EXISTS "${LUA_LOSLIB}")
-        message(FATAL_ERROR "Lua loslib.c was not found: ${LUA_LOSLIB}")
+        message(FATAL_ERROR
+            "Could not locate Lua loslib.c in ${lua_SOURCE_DIR}"
+        )
     endif()
 
     file(READ "${LUA_LOSLIB}" LUA_LOSLIB_CONTENT)
@@ -51,19 +61,21 @@ if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
     )
 
     if (LUA_SYSTEM_POSITION EQUAL -1)
-        message(FATAL_ERROR "Could not find Lua's l_system macro in loslib.c")
+        message(FATAL_ERROR
+            "Could not find Lua's l_system macro in loslib.c"
+        )
     endif()
 
     string(REPLACE
         "${LUA_SYSTEM_MACRO}"
-        "#define l_system(cmd)   (-1) /* os.execute unavailable on iOS */"
-        LUA_SYSTEM_MACRO_PATCHED
+        "#define l_system(cmd)   (-1) /* unavailable on iOS */"
+        LUA_LOSLIB_PATCHED
         "${LUA_LOSLIB_CONTENT}"
     )
 
-    file(WRITE "${LUA_LOSLIB}" "${LUA_SYSTEM_MACRO_PATCHED}")
+    file(WRITE "${LUA_LOSLIB}" "${LUA_LOSLIB_PATCHED}")
 
-    message(STATUS "Applied Lua iOS system() compatibility patch")
+    message(STATUS "Applied Lua iOS compatibility patch")
 endif()
 
 # Android32 compatibility
