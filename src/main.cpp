@@ -86,7 +86,19 @@ $on_mod(Loaded) {
 	}
 	lsp::fire("load");
 
-	ImGuiCocos::get().setup([] {}).draw([] { drawUI(); });
+	ImGuiCocos::get().setup([] {
+		// Open Sans for the script runner window (falls back to ImGui's default font)
+		auto dir = Mod::get()->getResourcesDir();
+		for (auto const& p : { dir / "OpenSans.ttf", dir / "resources" / "OpenSans.ttf" }) {
+			std::error_code ec;
+			if (!std::filesystem::exists(p, ec)) continue;
+			auto& io = ImGui::GetIO();
+			if (auto* font = io.Fonts->AddFontFromFileTTF(p.string().c_str(), 18.f)) {
+				io.FontDefault = font;
+			}
+			break;
+		}
+	}).draw([] { drawUI(); });
 }
 
 class $modify(LSPMenuLayer, MenuLayer) {
