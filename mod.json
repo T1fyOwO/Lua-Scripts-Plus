@@ -6,6 +6,10 @@
 		"mac": "*",
 		"ios": "*"
 	},
+	"resources": {
+		"sprites": ["resources/*.png"],
+		"files": ["resources/OpenSans.ttf"]
+	},
 	"id": "t1fy.lua-scripts-plus",
 	"name": "Lua Scripts+",
 	"version": "v1.0.0",
