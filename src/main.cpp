@@ -48,7 +48,7 @@ namespace {
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Open folder")) {
-				file::openFolder(lsp::scriptsDir());
+				file::openFolder(lsp::scriptsDir().string());
 			}
 
 			ImGui::Separator();
@@ -88,7 +88,7 @@ $on_mod(Loaded) {
 
 	ImGuiCocos::get().setup([] {
 		// Open Sans for the script runner window (falls back to ImGui's default font)
-		auto dir = Mod::get()->getResourcesDir();
+		std::filesystem::path dir = Mod::get()->getResourcesDir().toStdPath();
 		for (auto const& p : { dir / "OpenSans.ttf", dir / "resources" / "OpenSans.ttf" }) {
 			std::error_code ec;
 			if (!std::filesystem::exists(p, ec)) continue;
@@ -136,8 +136,8 @@ class $modify(LSPBaseGameLayer, GJBaseGameLayer) {
 };
 
 class $modify(LSPPlayLayer, PlayLayer) {
-	bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
-		if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
+	bool init(GJGameLevel* level, bool dontCreateObjects) {
+		if (!PlayLayer::init(level, dontCreateObjects)) return false;
 		lsp::fire("level_enter");
 		return true;
 	}
