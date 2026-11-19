@@ -43,8 +43,26 @@ if (ANDROID AND ANDROID_ABI STREQUAL "armeabi-v7a")
     target_compile_options(lua_static PRIVATE -ULUA_USE_POSIX)
 endif()
 
-# Dear ImGui (for the script runner window)
+# Dear ImGui for the script runner window
 CPMAddPackage("gh:matcool/gd-imgui-cocos#934958c68b1f050a8976d893584fa71368c1df1f")
+
+# gd-imgui-cocos includes the CCKeyboardDispatcher modify header on every platform,
+# but that header doesn't compile on iOS (no ctor/dtor address). iOS never uses it.
+if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
+    set(IMGUI_COCOS_HOOKS "${gd-imgui-cocos_SOURCE_DIR}/src/hooks.cpp")
+    if (EXISTS "${IMGUI_COCOS_HOOKS}")
+        file(READ "${IMGUI_COCOS_HOOKS}" IMGUI_COCOS_HOOKS_CONTENT)
+        string(REPLACE
+            "#include <Geode/modify/CCKeyboardDispatcher.hpp>"
+            "#ifndef GEODE_IS_IOS\n#include <Geode/modify/CCKeyboardDispatcher.hpp>\n#endif"
+            IMGUI_COCOS_HOOKS_PATCHED
+            "${IMGUI_COCOS_HOOKS_CONTENT}")
+        file(WRITE "${IMGUI_COCOS_HOOKS}" "${IMGUI_COCOS_HOOKS_PATCHED}")
+        message(STATUS "Patched gd-imgui-cocos hooks.cpp for iOS")
+    else()
+        message(WARNING "gd-imgui-cocos hooks.cpp not found at ${IMGUI_COCOS_HOOKS}")
+    endif()
+endif()
 
 target_link_libraries(${PROJECT_NAME}
     geode-sdk
