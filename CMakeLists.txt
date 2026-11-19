@@ -43,9 +43,13 @@ if (ANDROID AND ANDROID_ABI STREQUAL "armeabi-v7a")
     target_compile_options(lua_static PRIVATE -ULUA_USE_POSIX)
 endif()
 
+# Dear ImGui (for the script runner window)
+CPMAddPackage("gh:matcool/gd-imgui-cocos#934958c68b1f050a8976d893584fa71368c1df1f")
+
 target_link_libraries(${PROJECT_NAME}
     geode-sdk
     lua_static
+    imgui-cocos
 )
 
 setup_geode_mod(${PROJECT_NAME})
