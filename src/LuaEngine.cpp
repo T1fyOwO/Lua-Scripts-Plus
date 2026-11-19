@@ -99,7 +99,7 @@ namespace {
 
 namespace lsp {
 	std::filesystem::path scriptsDir() {
-		auto dir = Mod::get()->getConfigDir() / "scripts";
+		std::filesystem::path dir = (Mod::get()->getConfigDir() / "scripts").toStdPath();
 		std::error_code ec;
 		std::filesystem::create_directories(dir, ec);
 		return dir;
