@@ -88,7 +88,7 @@ $on_mod(Loaded) {
 
 	ImGuiCocos::get().setup([] {
 		// Open Sans for the script runner window (falls back to ImGui's default font)
-		std::filesystem::path dir = Mod::get()->getResourcesDir().toStdPath();
+		std::filesystem::path dir = std::filesystem::path(Mod::get()->getResourcesDir().string());
 		for (auto const& p : { dir / "OpenSans.ttf", dir / "resources" / "OpenSans.ttf" }) {
 			std::error_code ec;
 			if (!std::filesystem::exists(p, ec)) continue;
