@@ -30,21 +30,16 @@ CPMAddPackage(
         "LUA_BUILD_INTERPRETER OFF"
 )
 
-# Disable Lua's os.execute system() call on iOS.
+# Disable only Lua's os.execute() implementation.
 if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
 
     set(LUA_LOSLIB
         "${lua_SOURCE_DIR}/lua-5.4.5/src/loslib.c"
     )
 
-    # Fallback for alternate Lua source layouts.
-    if (NOT EXISTS "${LUA_LOSLIB}")
-        set(LUA_LOSLIB "${lua_SOURCE_DIR}/src/loslib.c")
-    endif()
-
     if (NOT EXISTS "${LUA_LOSLIB}")
         message(FATAL_ERROR
-            "Could not locate Lua loslib.c in ${lua_SOURCE_DIR}"
+            "Lua loslib.c was not found: ${LUA_LOSLIB}"
         )
     endif()
 
