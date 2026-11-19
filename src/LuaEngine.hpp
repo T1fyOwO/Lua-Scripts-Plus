@@ -14,4 +14,6 @@ namespace lsp {
 	// Fires a named event to all handlers registered with lsp.on(name, fn).
 	void fire(std::string const& event);
 	std::filesystem::path scriptsDir();
+	// Sorted list of .lua files in the scripts folder.
+	std::vector<std::filesystem::path> listScripts();
 }
