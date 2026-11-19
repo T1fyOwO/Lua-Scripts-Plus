@@ -6,6 +6,9 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
 project(LuaScriptsPlus VERSION 1.0.0)
 
+# Stops CMake from scanning for C++ modules (fixes the Android64 fmt/std.cc error)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
+
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Set GEODE_SDK.")
 endif()
@@ -30,47 +33,9 @@ CPMAddPackage(
         "LUA_BUILD_INTERPRETER OFF"
 )
 
-# Disable only Lua's os.execute() implementation.
+# iOS compatibility (Lua disables os.execute itself when LUA_USE_IOS is set)
 if (CMAKE_SYSTEM_NAME STREQUAL "iOS")
-
-    set(LUA_LOSLIB
-        "${lua_SOURCE_DIR}/lua-5.4.5/src/loslib.c"
-    )
-
-    if (NOT EXISTS "${LUA_LOSLIB}")
-        message(FATAL_ERROR
-            "Lua loslib.c was not found: ${LUA_LOSLIB}"
-        )
-    endif()
-
-    file(READ "${LUA_LOSLIB}" LUA_LOSLIB_CONTENT)
-
-    set(LUA_SYSTEM_MACRO
-        "#define l_system(cmd)   system(cmd)  /* default definition */"
-    )
-
-    string(FIND
-        "${LUA_LOSLIB_CONTENT}"
-        "${LUA_SYSTEM_MACRO}"
-        LUA_SYSTEM_POSITION
-    )
-
-    if (LUA_SYSTEM_POSITION EQUAL -1)
-        message(FATAL_ERROR
-            "Could not find Lua's l_system macro in loslib.c"
-        )
-    endif()
-
-    string(REPLACE
-        "${LUA_SYSTEM_MACRO}"
-        "#define l_system(cmd)   (-1) /* unavailable on iOS */"
-        LUA_LOSLIB_PATCHED
-        "${LUA_LOSLIB_CONTENT}"
-    )
-
-    file(WRITE "${LUA_LOSLIB}" "${LUA_LOSLIB_PATCHED}")
-
-    message(STATUS "Applied Lua iOS compatibility patch")
+    target_compile_definitions(lua_static PRIVATE LUA_USE_IOS)
 endif()
 
 # Android32 compatibility
